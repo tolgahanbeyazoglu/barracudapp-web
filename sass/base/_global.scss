@@ -1,0 +1,117 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+font,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr { margin: 0; padding: 0; border: 0; outline: 0; }
+
+html,
+body { line-height: 1; overflow-x: hidden; font-family: 'Gilroy-medium', 'sans-serif' !important; }
+
+ol,
+ul { list-style: none; }
+
+
+blockquote,
+p,
+pre,
+ul li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 { font-variant-numeric: lining-nums proportional-nums; }
+
+
+
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+body { font-size: 16px; box-sizing: border-box; color: #000; position: relative; font-weight: 500; font-size: 16px; }
+
+span,p { margin: 0px; padding: 0px; letter-spacing: 1px; }
+
+
+button { letter-spacing: 1px; }
+
+a { text-decoration: none !important; 
+
+  &:hover { text-decoration: none !important; }
+}
+
+input {  &:focus { box-shadow: none; }
+}
+
+.btn {  &:focus { box-shadow: none !important; }
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+figure{  margin: 0px; padding: 0px; }
+
+
+.input-validation-error { border-color: #dd1919 !important; }
+
+.input-validation-error { border-color: #dd1919 !important; }
+
+.field-validation-error { display: block !important; bottom: -44px; margin-top: 4px; margin-left: 10px; color: #ffff !important; position: absolute; background-color: #d32b34; font-size: 13px; padding: 6px 8px 7px; border-radius: 0px; z-index: 1; 
+
+  &::before { content: "\f235"; font-size: 14px; color: #dd1919; font-family: bootstrap-icons !important; font-style: normal; font-weight: normal !important; font-variant: normal; text-transform: none; position: absolute; left: 50%; top: -5%; transform: translate(-50%, -50%); }
+
+  @include desktop-l { font-size: 12px; }
+}
+
+.overflow { overflow: hidden; height: 100%; }
+
+.container-fluid{  padding-left: 60px !important; padding-right: 60px !important; 
+  @include mobile-display{
+    padding-left: 25px !important; padding-right: 25px !important;
+  }
+}

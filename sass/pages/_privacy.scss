@@ -1,0 +1,38 @@
+.partner-section{
+    padding-top: 50px;
+    padding-bottom: 50px;
+    min-height: 100vh;
+    .header{
+        background: var(--Background, #FFF7F2);
+        @include padding(25px 0);
+        h1{
+            font-family: $semibold;
+            font-size: clamp(24px, 4vw, 40px);
+        }
+    }
+    .content{
+        @include margin-top(40px);
+        .editor{
+            p{
+                font-family: $semibold;
+                @include font-size(24px);
+                margin-bottom: 20px;
+            }
+            ul{
+                list-style: disc;
+                padding-left: 20px;
+                li{
+                    margin-bottom: 40px;
+                    color: #787878;
+                    @include font-size(20px);
+                }
+            }
+        }
+    }
+    .parner-icon{
+      width: fit-content;
+      margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+}

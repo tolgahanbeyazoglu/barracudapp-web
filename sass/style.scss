@@ -1,0 +1,20 @@
+@import "base/fonts";
+@import "Base/variables";
+@import "Base/media";
+@import "Base/global";
+@import "Base/animation";
+@import "Base/mixin";
+@import "Base/extend";
+
+
+/*components*/
+@import "components/rfs";
+@import "components/navbar-menu";
+@import "components/toggle-Menu";
+@import "components/footer";
+
+
+
+/*page*/
+@import "pages/home";
+@import "pages/privacy"

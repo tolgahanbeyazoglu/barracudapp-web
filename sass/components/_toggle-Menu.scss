@@ -1,0 +1,84 @@
+.navbar-menu {
+    .navbar-main {
+        .Toggle-menu-navbar {
+            position: relative;
+            z-index: 10;
+
+            .toggle {
+                overflow: hidden;
+                width: 100%;
+                height: 100vh;
+                z-index: 0;
+                opacity: 0;
+                visibility: hidden;
+                position: fixed;
+                right: 0;
+                bottom: 0;
+                @extend %transition3;
+                background: #E7440B;
+                backdrop-filter: blur(10px);
+
+                .toggle-container {
+                    width: 100%;
+                    height: 100%;
+                    position: relative;
+
+                    .content {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        position: relative;
+                        justify-content: center;
+
+                        .toggle-menu {
+                            flex-direction: column;
+                            justify-content: start;
+                            align-items: center;
+                            .item {
+                                opacity: 0;
+
+                                .links {
+                                    color: #fff;
+                                    text-transform: uppercase;
+                                    @include margin-bottom(30px);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                &.active {
+                    .toggle-container {
+                        .content {
+                            @keyframes slide-in-right {
+                                0% {
+                                    opacity: 0;
+                                    transform: translateY(50px);
+                                }
+
+                                100% {
+                                    opacity: 1;
+                                    transform: translateY(0);
+                                }
+                            }
+
+                            .toggle-menu {
+                                .item {
+                                    transform: translateY(50px);
+                                    animation: slide-in-right 0.6s ease forwards;
+                                }
+
+                                @for $i from 1 through 10 {
+                                    .item:nth-child(#{$i}) {
+                                        animation-delay: #{($i * 0.1)}s;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
