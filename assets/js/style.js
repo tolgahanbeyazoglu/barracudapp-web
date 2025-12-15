@@ -1,3 +1,6 @@
+// Dynamic Year
+document.getElementById("currentYear").textContent = new Date().getFullYear();
+
 document.querySelectorAll("img.svg").forEach(function (img) {
   var imgID = img.id;
   var imgClass = img.className;
@@ -44,9 +47,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let isScrolling = false;
   let scrollTimeout;
   let isMenuClick = false; // Menu tıklaması flag'i
+  let lastScrollTime = 0;
+  const scrollDelay = 400; // Scroll hassasiyetini artırdık
   const serviceBoxes = document.querySelectorAll(".work-box");
   const serviceImages = document.querySelectorAll(".work-image");
-  
+
   function updateServiceView(index) {
     // Update boxes
     serviceBoxes.forEach((box, i) => {
@@ -57,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
         box.classList.remove("active");
       }
     });
-    
+
     // Update images
     serviceImages.forEach((img, i) => {
       if (i === index) {
@@ -67,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-  
+
   // Service box click for manual control
   serviceBoxes.forEach((box) => {
     box.addEventListener("click", function () {
@@ -82,12 +87,13 @@ document.addEventListener("DOMContentLoaded", function () {
       licenseKey: "gplv3-license",
       credits: { enabled: false },
       anchors: [
-        "anasayfa",
-        "haqqimizda",
-        "nece-isleyir",
-        "suallar",
-        "abune-ol",
-        "yukle",
+        "home",
+        "about",
+        "how-it-works",
+        "faq",
+        "subscribe",
+        "download",
+        "footer",
       ],
       menu: ".navbar-links",
       navigation: false,
@@ -95,21 +101,21 @@ document.addEventListener("DOMContentLoaded", function () {
       scrollBar: false,
       fitToSection: true,
       scrollingSpeed: 700,
-      paddingTop: '80px',
-      responsiveWidth: 992, 
+      paddingTop: "80px",
+      responsiveWidth: 992,
       responsiveHeight: 0, // 992px-dən kiçik ekranlarda normal scroll
-      afterRender: function() {
+      afterRender: function () {
         // fullPage.js render olduktan sonra AOS'u başlat
         AOS.init({
-    once: "true",
-  });
+          once: "true",
+        });
       },
-      afterLoad: function(origin, destination, direction) {
+      afterLoad: function (origin, destination, direction) {
         // Her section yüklendiğinde AOS animasyonlarını manuel tetikle
-        setTimeout(function() {
-          const aosElements = destination.item.querySelectorAll('[data-aos]');
-          aosElements.forEach(function(el) {
-            el.classList.add('aos-animate');
+        setTimeout(function () {
+          const aosElements = destination.item.querySelectorAll("[data-aos]");
+          aosElements.forEach(function (el) {
+            el.classList.add("aos-animate");
           });
         }, 100);
       },
@@ -121,36 +127,47 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           navbar.classList.remove("fixed-menu");
         }
-        
+
         // Menu tıklaması ise kontrolleri atla
         if (isMenuClick) {
           isMenuClick = false;
           currentServiceIndex = 0; // Index'i sıfırla
           return true; // Geçişe izin ver
         }
-        
+
         // Hizmetler section'ından çıkarken kontrol (sadece scroll için)
-        if (origin.anchor === "nece-isleyir" && !isMenuClick) {
-          if (isScrolling) return false; // Scroll animasyonu devam ediyorsa bekle
-          
+        if (origin.anchor === "how-it-works" && !isMenuClick) {
+          const currentTime = new Date().getTime();
+
+          // Çok hızlı scroll hareketlerini engelle
+          if (currentTime - lastScrollTime < scrollDelay) {
+            return false;
+          }
+
           if (direction === "down" && currentServiceIndex < totalServices - 1) {
+            lastScrollTime = currentTime;
             isScrolling = true;
             currentServiceIndex++;
             updateServiceView(currentServiceIndex);
-            setTimeout(() => { isScrolling = false; }, 800); // 800ms bekle
+            setTimeout(() => {
+              isScrolling = false;
+            }, scrollDelay);
             return false; // Henüz tüm servisleri görmedi
           }
           if (direction === "up" && currentServiceIndex > 0) {
+            lastScrollTime = currentTime;
             isScrolling = true;
             currentServiceIndex--;
             updateServiceView(currentServiceIndex);
-            setTimeout(() => { isScrolling = false; }, 800);
+            setTimeout(() => {
+              isScrolling = false;
+            }, scrollDelay);
             return false; // Henüz ilk servise gelmedi
           }
         }
-        
+
         // Hizmetler section'ına girerken index'i sıfırla
-        if (destination.anchor === "nece-isleyir") {
+        if (destination.anchor === "how-it-works") {
           if (direction === "down") {
             currentServiceIndex = 0;
           } else {
@@ -163,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Mobile scroll pozisyonuna göre navbar fixed (sadece 992px altında)
-  window.addEventListener('scroll', function() {
+  window.addEventListener("scroll", function () {
     if (window.innerWidth < 992) {
       const navbar = document.querySelector(".navbar-menu");
       if (window.scrollY > 150) {
@@ -178,27 +195,37 @@ document.addEventListener("DOMContentLoaded", function () {
   if (window.innerWidth < 992) {
     AOS.init({
       duration: 800,
-      easing: 'ease',
+      easing: "ease",
       once: false,
       mirror: true,
       disable: false,
-      offset: 120
+      offset: 120,
     });
   }
 
   // Navbar menu click event - mobilde smooth scroll, desktop'ta fullPage.js
-  const navbarLinks = document.querySelectorAll(".navbar-links a, .toggle-menu a");
-  navbarLinks.forEach(link => {
-    link.addEventListener("click", function(e) {
+  const navbarLinks = document.querySelectorAll(
+    ".navbar-links a, .toggle-menu a"
+  );
+  navbarLinks.forEach((link) => {
+    link.addEventListener("click", function (e) {
       isMenuClick = true;
-      
-      // Mobilde smooth scroll
+      const href = this.getAttribute("href");
+
+      // Eğer link başka bir sayfaya yönleniyorsa (index.html# içeriyorsa), normal davransın
+      if (href.includes(".html")) {
+        return; // Sayfaya yönlendir, preventDefault yapma
+      }
+
+      // Mobilde smooth scroll (aynı sayfa içinde)
       if (window.innerWidth < 992) {
         e.preventDefault();
-        const targetId = this.getAttribute('href').substring(1);
-        const targetSection = document.querySelector(`[data-anchor="${targetId}"]`);
+        const targetId = href.substring(1);
+        const targetSection = document.querySelector(
+          `[data-anchor="${targetId}"]`
+        );
         if (targetSection) {
-          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       }
     });
