@@ -8,7 +8,12 @@
     .content { @include margin-top(40px); 
 
         .editor {
-            p { font-family: $semibold; margin-bottom: 20px; font-size: clamp(16px, 3vw, 24px); }
+
+            h1,h2,h3,h4,h5,h6{
+                font-family: $bold; margin-bottom: 20px; color: #000000; line-height: 1.2;
+            }
+
+            p { font-family: $semibold; color: #787878; margin-bottom: 20px; font-size: clamp(16px, 1.5vw, 17px); line-height: 24px; }
 
             ul { list-style: disc; padding-left: 20px; 
 
