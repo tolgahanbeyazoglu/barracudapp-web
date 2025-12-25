@@ -41,45 +41,71 @@ document.querySelectorAll("img.svg").forEach(function (img) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Services scroll system
-  let currentServiceIndex = 0;
-  const totalServices = 3;
-  let isScrolling = false;
-  let scrollTimeout;
   let isMenuClick = false; // Menu tıklaması flag'i
-  let lastScrollTime = 0;
-  const scrollDelay = 400; // Scroll hassasiyetini artırdık
-  const serviceBoxes = document.querySelectorAll(".work-box");
-  const serviceImages = document.querySelectorAll(".work-image");
 
-  function updateServiceView(index) {
-    // Update boxes
-    serviceBoxes.forEach((box, i) => {
-      const icon = box.querySelector("i");
-      if (i === index) {
-        box.classList.add("active");
-      } else {
-        box.classList.remove("active");
-      }
+
+    const commentSwiper = new Swiper(".comment-swiper", {
+    loop: true,
+    slidesPerView: 3,
+    spaceBetween: 36,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: ".comment-pagination",
+      clickable: true,
+    },
+    breakpoints: {
+      0: { slidesPerView: 1 },
+      768: { slidesPerView: 2 },
+      1024: { slidesPerView: 2 },
+       1200: { slidesPerView: 3 },
+    },
+  });
+  // Work Section Swiper Initialization
+  let workSwiper = null;
+  if (document.querySelector(".work-images-swiper")) {
+    const workBoxes = document.querySelectorAll(".works-slides-pag");
+    
+    workSwiper = new Swiper(".work-images-swiper", {
+      effect: "fade",
+      fadeEffect: {
+        crossFade: true,
+      },
+      speed: 600,
+      allowTouchMove: false,
+      loop: true,
+      autoplay: {
+        delay: 2000,
+        disableOnInteraction: false,
+      },
+      on: {
+        init: function () {
+          // İlk yüklemede autoplay'i başlat
+          this.autoplay.start();
+        },
+        slideChange: function () {
+          // Update work boxes based on swiper slide change
+          const realIndex = this.realIndex;
+          workBoxes.forEach((box, index) => {
+            if (index === realIndex) {
+              box.classList.add("active");
+            } else {
+              box.classList.remove("active");
+            }
+          });
+        },
+      },
     });
 
-    // Update images
-    serviceImages.forEach((img, i) => {
-      if (i === index) {
-        img.classList.add("active");
-      } else {
-        img.classList.remove("active");
-      }
+    // Work box click to change slide
+    workBoxes.forEach((box, index) => {
+      box.addEventListener("click", function () {
+        workSwiper.slideToLoop(index);
+      });
     });
   }
-
-  // Service box click for manual control
-  serviceBoxes.forEach((box) => {
-    box.addEventListener("click", function () {
-      currentServiceIndex = parseInt(this.getAttribute("data-service-index"));
-      updateServiceView(currentServiceIndex);
-    });
-  });
 
   // FullPage.js - Temiz konfigürasyon
   if (document.getElementById("fullpage")) {
@@ -89,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
       anchors: [
         "home",
         "about",
+        "features",
         "how-it-works",
         "faq",
         "subscribe",
@@ -118,6 +145,12 @@ document.addEventListener("DOMContentLoaded", function () {
             el.classList.add("aos-animate");
           });
         }, 100);
+
+        // how-it-works section'ına geldiğinde workSwiper'ı başa al ve autoplay'i başlat
+        if (destination.anchor === "how-it-works" && workSwiper) {
+          workSwiper.slideTo(0, 0);
+          workSwiper.autoplay.start();
+        }
       },
       onLeave: function (origin, destination, direction) {
         // Desktop navbar kontrolü
@@ -131,49 +164,13 @@ document.addEventListener("DOMContentLoaded", function () {
         // Menu tıklaması ise kontrolleri atla
         if (isMenuClick) {
           isMenuClick = false;
-          currentServiceIndex = 0; // Index'i sıfırla
           return true; // Geçişe izin ver
         }
 
-        // Hizmetler section'ından çıkarken kontrol (sadece scroll için)
-        if (origin.anchor === "how-it-works" && !isMenuClick) {
-          const currentTime = new Date().getTime();
-
-          // Çok hızlı scroll hareketlerini engelle
-          if (currentTime - lastScrollTime < scrollDelay) {
-            return false;
-          }
-
-          if (direction === "down" && currentServiceIndex < totalServices - 1) {
-            lastScrollTime = currentTime;
-            isScrolling = true;
-            currentServiceIndex++;
-            updateServiceView(currentServiceIndex);
-            setTimeout(() => {
-              isScrolling = false;
-            }, scrollDelay);
-            return false; // Henüz tüm servisleri görmedi
-          }
-          if (direction === "up" && currentServiceIndex > 0) {
-            lastScrollTime = currentTime;
-            isScrolling = true;
-            currentServiceIndex--;
-            updateServiceView(currentServiceIndex);
-            setTimeout(() => {
-              isScrolling = false;
-            }, scrollDelay);
-            return false; // Henüz ilk servise gelmedi
-          }
-        }
-
-        // Hizmetler section'ına girerken index'i sıfırla
-        if (destination.anchor === "how-it-works") {
-          if (direction === "down") {
-            currentServiceIndex = 0;
-          } else {
-            currentServiceIndex = totalServices - 1;
-          }
-          updateServiceView(currentServiceIndex);
+        // Reset work swiper when leaving how-it-works section
+        if (origin.anchor === "how-it-works" && workSwiper) {
+          workSwiper.autoplay.stop();
+          workSwiper.slideTo(0, 0);
         }
       },
     });
